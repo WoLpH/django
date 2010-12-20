@@ -32,5 +32,10 @@ def import_module(name, package=None):
                 break
             level += 1
         name = _resolve_name(name[level:], package, level)
+        
+    try:
     __import__(name)
+    except ImportError, e:
+        print e.message
+        raise
     return sys.modules[name]

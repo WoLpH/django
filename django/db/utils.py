@@ -19,6 +19,8 @@ class IntegrityError(DatabaseError):
 
 
 def load_backend(backend_name):
+    print 'loading', backend_name
+        print 'excepted'
     # Look for a fully qualified database backend name
     try:
         return import_module('.base', backend_name)
@@ -89,7 +91,9 @@ class ConnectionHandler(object):
 
         self.ensure_defaults(alias)
         db = self.databases[alias]
+        print 'loading'
         backend = load_backend(db['ENGINE'])
+        print 'db loaded'
         conn = backend.DatabaseWrapper(db, alias)
         setattr(self._connections, alias, conn)
         return conn
