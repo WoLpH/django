@@ -75,7 +75,10 @@ def post_comment(request, next=None, using=None):
     preview = "preview" in data
 
     # Construct the comment form
-    form = comments.get_form()(target, data=data)
+    #HACK: needed to adjust this for things to work, sorry
+    from django_form_stats import helpers as form_stats_helpers
+    request.context['comment_form'] = form = comments.get_form()(target, data=data)
+    form_stats_helpers.track_form(request, form, request.POST)
 
     # Check security information
     if form.security_errors():
@@ -131,7 +134,7 @@ def post_comment(request, next=None, using=None):
         request = request
     )
 
-    return next_redirect(data, next, comment_done, c=comment._get_pk_val())
+    return next_redirect(data, next, comment_done)
 
 comment_done = confirmation_view(
     template = "comments/posted.html",
