@@ -15,7 +15,7 @@ class DatabaseCreation(BaseDatabaseCreation):
         'CharField':         'varchar(%(max_length)s)',
         'CommaSeparatedIntegerField': 'varchar(%(max_length)s)',
         'DateField':         'date',
-        'DateTimeField':     'timestamp with time zone',
+        'DateTimeField':     'timestamp without time zone',
         'DecimalField':      'numeric(%(max_digits)s, %(decimal_places)s)',
         'FileField':         'varchar(%(max_length)s)',
         'FilePathField':     'varchar(%(max_length)s)',
