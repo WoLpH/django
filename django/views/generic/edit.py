@@ -148,8 +148,8 @@ class ProcessFormView(View):
 class BaseFormView(FormMixin, ProcessFormView):
     """
     A base view for displaying a form
-    """
 
+    """
 
 class FormView(TemplateResponseMixin, BaseFormView):
     """
