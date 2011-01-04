@@ -113,6 +113,7 @@ def python_reloader(main_func, args, kwargs):
             reloader_thread()
         except KeyboardInterrupt:
             pass
+            raise
     else:
         try:
             exit_code = restart_with_reloader()
@@ -122,6 +123,7 @@ def python_reloader(main_func, args, kwargs):
                 sys.exit(exit_code)
         except KeyboardInterrupt:
             pass
+            raise
 
 def jython_reloader(main_func, args, kwargs):
     from _systemrestart import SystemRestart
