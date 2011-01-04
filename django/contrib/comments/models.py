@@ -30,6 +30,9 @@ class BaseCommentAbstractModel(models.Model):
     class Meta:
         abstract = True
 
+    def get_content_type(self):
+        return ContentType.objects.get_for_model(self.__class__)
+
     def get_content_object_url(self):
         """
         Get a URL suitable for redirecting to the content object.
