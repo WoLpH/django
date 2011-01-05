@@ -396,6 +396,10 @@ class Query(object):
         Performs a COUNT() query using the current filter constraints.
         """
         obj = self.clone()
+        from subqueries import AggregateQuery
+        import logging
+        logging.warn('self.select: %r :: %d', self.select, len(self.select))
+        logging.warn('self.aggregate select: %r', self.aggregate_select)
         if len(self.select) > 1 or self.aggregate_select or (self.distinct and self.distinct_fields):
             # If a select clause exists, then the query has already started to
             # specify the columns that are to be returned.
@@ -413,6 +417,26 @@ class Query(object):
                 # then there are can be no results, and therefore there the
                 # count is obviously 0
                 return 0
+
+        else:
+            old_high_mark = obj.high_mark
+            if obj.high_mark is None:
+                obj.high_mark = 1000
+
+            meta = self.model._meta
+            subquery = obj
+            subquery.clear_ordering(True)
+            subquery.select = [(meta.db_table, meta.pk.column)]
+
+            # When counting an empty query that uses a join we sometimes
+            # encounter an EmptyResultSet. In that case we can safely return 0
+            try:
+                obj = AggregateQuery(obj.model)
+                obj.add_subquery(subquery, using=using)
+            except EmptyResultSet:
+                return 0
+            finally:
+                obj.high_mark = old_high_mark
 
         obj.add_count_column()
         number = obj.get_aggregation(using=using)[None]
