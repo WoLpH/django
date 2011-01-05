@@ -397,9 +397,6 @@ class Query(object):
         """
         obj = self.clone()
         from subqueries import AggregateQuery
-        import logging
-        logging.warn('self.select: %r :: %d', self.select, len(self.select))
-        logging.warn('self.aggregate select: %r', self.aggregate_select)
         if len(self.select) > 1 or self.aggregate_select or (self.distinct and self.distinct_fields):
             # If a select clause exists, then the query has already started to
             # specify the columns that are to be returned.
