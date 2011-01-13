@@ -186,7 +186,7 @@ def javascript_catalog(request, domain='djangojs', packages=None):
         packages = ['django.conf']
     if isinstance(packages, basestring):
         packages = packages.split('+')
-    packages = [p for p in packages if p == 'django.conf' or p in settings.INSTALLED_APPS]
+    #packages = [p for p in packages if p == 'django.conf' or p in settings.INSTALLED_APPS]
     default_locale = to_locale(settings.LANGUAGE_CODE)
     locale = to_locale(get_language())
     t = {}
@@ -195,8 +195,10 @@ def javascript_catalog(request, domain='djangojs', packages=None):
     en_catalog_missing = True
     # paths of requested packages
     for package in packages:
-        p = importlib.import_module(package)
-        path = os.path.join(os.path.dirname(p.__file__), 'locale')
+        #HACKED IN SUPPORT FOR NON PYTHON MODULES
+        parts = [settings.BASE_ROOT] + package.split('.') + ['locale']
+        path = os.path.join(*parts)
+        path = os.path.abspath(path)
         paths.append(path)
     # add the filesystem paths listed in the LOCALE_PATHS setting
     paths.extend(list(reversed(settings.LOCALE_PATHS)))
