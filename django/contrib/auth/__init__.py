@@ -95,6 +95,8 @@ def logout(request):
 def get_user(request):
     from django.contrib.auth.models import AnonymousUser
     try:
+        if 'uid' not in request.COOKIES:
+            raise KeyError, 'no uid cookie set, not logged in'
         user_id = request.session[SESSION_KEY]
         backend_path = request.session[BACKEND_SESSION_KEY]
         backend = load_backend(backend_path)
