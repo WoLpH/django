@@ -74,7 +74,7 @@ class Comment(BaseCommentAbstractModel):
 
     class Meta:
         db_table = "django_comments"
-        ordering = ('id',)
+        ordering = ('-id',)
         permissions = [("can_moderate", "Can moderate comments")]
         verbose_name = _('comment')
         verbose_name_plural = _('comments')
