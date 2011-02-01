@@ -397,6 +397,7 @@ class Query(object):
         """
         obj = self.clone()
         from subqueries import AggregateQuery
+        from django.conf import settings
         if len(self.select) > 1 or self.aggregate_select or (self.distinct and self.distinct_fields):
             # If a select clause exists, then the query has already started to
             # specify the columns that are to be returned.
@@ -409,10 +410,10 @@ class Query(object):
             obj = AggregateQuery(obj.model)
             obj.add_subquery(subquery, using=using)
 
-        else:
+        elif obj.high_mark or settings.COUNT_LIMIT_DEFAULT_SLICE:
             old_high_mark = obj.high_mark
             if obj.high_mark is None:
-                obj.high_mark = 1000
+                obj.high_mark = settings.COUNT_LIMIT_DEFAULT_SLICE
 
             meta = self.model._meta
             subquery = obj
