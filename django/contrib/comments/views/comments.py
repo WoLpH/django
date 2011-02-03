@@ -27,7 +27,6 @@ class CommentPostBadRequest(http.HttpResponseBadRequest):
         if settings.DEBUG:
             self.content = render_to_string("comments/400-debug.html", {"why": why})
 
-@csrf_protect
 @require_POST
 def post_comment(request, next=None, using=None):
     """
