@@ -296,8 +296,11 @@ class BaseDatabaseWrapper(object):
     def close(self):
         self.validate_thread_sharing()
         if self.connection is not None:
+            try:
             self.connection.close()
             self.connection = None
+            except Exception:
+                self.connection = None
 
     def cursor(self):
         self.validate_thread_sharing()
