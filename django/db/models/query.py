@@ -69,6 +69,12 @@ class QuerySet(object):
         return obj_dict
 
     def __repr__(self):
+        return '<%s[%s.%s] %s>' % (
+            self.__class__.__name__,
+            self.model._meta.module_name,
+            self.model._meta.object_name,
+            self.query,
+        )
         data = list(self[:REPR_OUTPUT_SIZE + 1])
         if len(data) > REPR_OUTPUT_SIZE:
             data[-1] = "...(remaining elements truncated)..."
