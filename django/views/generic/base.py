@@ -110,6 +110,7 @@ class TemplateResponseMixin(object):
             return [self.template_name]
 
 
+
 class TemplateView(TemplateResponseMixin, View):
     """
     A view that renders a template.
