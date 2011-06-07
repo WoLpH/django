@@ -12,7 +12,11 @@ DEFAULT_DB_ALIAS = 'default'
 # We will rethrow any backend-specific errors using these
 # common wrappers
 class DatabaseError(Exception):
-    pass
+    def __init__(self, *args):
+        self.args = args
+
+    def __repr__(self):
+        return '<%s: %r>' % (self.__class__.__name__, self.args)
 
 class IntegrityError(DatabaseError):
     pass

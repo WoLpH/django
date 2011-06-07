@@ -61,8 +61,12 @@ class CursorWrapper(object):
         except Database.IntegrityError, e:
             raise utils.IntegrityError, utils.IntegrityError(*tuple(e)), sys.exc_info()[2]
         except Database.DatabaseError, e:
-            print >>sys.stderr, 'Unable to execute: %r with args: %s' % (query, args)
-            raise utils.DatabaseError, utils.DatabaseError(*tuple(e)), sys.exc_info()[2]
+            raise utils.DatabaseError(
+                utils.DatabaseError(*tuple(e)),
+                sys.exc_info()[2],
+                query,
+                args,
+            )
 
     def __getattr__(self, attr):
         if attr in self.__dict__:
