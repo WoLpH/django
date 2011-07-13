@@ -26,3 +26,4 @@ class Command(BaseCommand):
             # inaccurate. Still, this message catches the common case.
             raise CommandError('You appear not to have the %r program installed or on your path.' % \
                 connection.client.executable_name)
+
