@@ -15,8 +15,6 @@ class DatabaseClient(BaseDatabaseClient):
             args.extend(["-h", settings_dict['HOST']])
         if settings_dict['PORT']:
             args.extend(["-p", str(settings_dict['PORT'])])
-        if settings_dict['PASSWORD']:
-            print 'Password: %s', settings_dict['PASSWORD']
         args += [settings_dict['NAME']]
         if os.name == 'nt':
             sys.exit(os.system(" ".join(args)))
