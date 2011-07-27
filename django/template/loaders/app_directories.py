@@ -20,6 +20,8 @@ for app in settings.INSTALLED_APPS:
     try:
         mod = import_module(app)
     except ImportError, e:
+        print >>sys.stderr, 'Unable to import %r' % app
+        raise
         raise ImproperlyConfigured('ImportError %s: %s' % (app, e.args[0]))
     template_dir = os.path.join(os.path.dirname(mod.__file__), 'templates')
     if os.path.isdir(template_dir):
