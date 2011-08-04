@@ -6,15 +6,16 @@ from time import time
 from django.conf import settings
 from django.utils.log import getLogger
 from django.utils.timezone import utc
-
+from django_statsd import database
 
 logger = getLogger('django.db.backends')
 
 
-class CursorWrapper(object):
+class CursorWrapper(database.TimingCursorWrapper):
     def __init__(self, cursor, db):
         self.cursor = cursor
         self.db = db
+        database.TimingCursorWrapper.__init__(self)
 
     def set_dirty(self):
         if self.db.is_managed():
@@ -37,7 +38,7 @@ class CursorDebugWrapper(CursorWrapper):
         self.set_dirty()
         start = time()
         try:
-            return self.cursor.execute(sql, params)
+            return CursorWrapper.execute(self, sql, params)
         finally:
             stop = time()
             duration = stop - start
@@ -54,7 +55,7 @@ class CursorDebugWrapper(CursorWrapper):
         self.set_dirty()
         start = time()
         try:
-            return self.cursor.executemany(sql, param_list)
+            return CursorWrapper.executemany(self, sql, param_list)
         finally:
             stop = time()
             duration = stop - start
