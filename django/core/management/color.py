@@ -15,7 +15,8 @@ def supports_color():
     unsupported_platform = (sys.platform in ('win32', 'Pocket PC'))
     # isatty is not always implemented, #6223.
     is_a_tty = hasattr(sys.stdout, 'isatty') and sys.stdout.isatty()
-    if unsupported_platform or not is_a_tty:
+    if not os.environ.get('FORCE_COLOR') and (
+            unsupported_platform or not is_a_tty):
         return False
     return True
 
