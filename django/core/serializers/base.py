@@ -33,7 +33,6 @@ class Serializer(object):
         Serialize a queryset.
         """
         self.options = options
-
         self.stream = options.pop("stream", StringIO())
         self.selected_fields = options.pop("fields", None)
         self.use_natural_keys = options.pop("use_natural_keys", False)
