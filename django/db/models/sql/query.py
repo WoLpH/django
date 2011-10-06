@@ -395,6 +395,8 @@ class Query(object):
         """
         Performs a COUNT() query using the current filter constraints.
         """
+        if self.high_mark and self.low_mark and self.high_mark <= self.low_mark:
+            return 0
         obj = self.clone()
         from subqueries import AggregateQuery
         from django.conf import settings
@@ -402,43 +404,32 @@ class Query(object):
             # If a select clause exists, then the query has already started to
             # specify the columns that are to be returned.
             # In this case, we need to use a subquery to evaluate the count.
-            from subqueries import AggregateQuery
+#            subquery.clear_limits()
+        if self.select or self.aggregate_select:
             subquery = obj
+        elif obj.high_mark is not None or settings.COUNT_LIMIT_DEFAULT_SLICE:
+            subquery = obj
+            meta = self.model._meta
+            subquery.select = [(meta.db_table, meta.pk.column)]
+        else:
+            subquery = None
+
+        if subquery is not None:
             subquery.clear_ordering(True)
-            subquery.clear_limits()
 
-            obj = AggregateQuery(obj.model)
-            obj.add_subquery(subquery, using=using)
-
-        elif obj.high_mark or settings.COUNT_LIMIT_DEFAULT_SLICE:
-            old_high_mark = obj.high_mark
             if obj.high_mark is None:
                 obj.high_mark = settings.COUNT_LIMIT_DEFAULT_SLICE
 
-            meta = self.model._meta
-            subquery = obj
-            subquery.clear_ordering(True)
-            subquery.select = [(meta.db_table, meta.pk.column)]
-
-            # When counting an empty query that uses a join we sometimes
-            # encounter an EmptyResultSet. In that case we can safely return 0
-            try:
                 obj = AggregateQuery(obj.model)
                 obj.add_subquery(subquery, using=using)
-            except EmptyResultSet:
-                return 0
-            finally:
-                obj.high_mark = old_high_mark
 
         obj.add_count_column()
         number = obj.get_aggregation(using=using)[None]
 
-        # Apply offset and limit constraints manually, since using LIMIT/OFFSET
-        # in SQL (in variants that provide them) doesn't change the COUNT
-        # output.
-        number = max(0, number - self.low_mark)
-        if self.high_mark is not None:
-            number = min(number, self.high_mark - self.low_mark)
+        #TOMMASO NOTE
+        # here things are customized! sub query takes care of counting already
+        if self.high_mark is None and self.low_mark is not None:
+            number -= min(number, self.low_mark)
 
         return number
 
