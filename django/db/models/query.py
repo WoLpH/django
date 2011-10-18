@@ -69,11 +69,19 @@ class QuerySet(object):
         return obj_dict
 
     def __repr__(self):
+        query = self.query
+        # small hack to add query formatting if possible
+        try:
+            import sqlparse
+            query = sqlparse.format(unicode(query), reindent=True)
+        except:
+            pass
+
         return '<%s[%s.%s] %s>' % (
             self.__class__.__name__,
             self.model._meta.module_name,
             self.model._meta.object_name,
-            self.query,
+            query,
         )
         data = list(self[:REPR_OUTPUT_SIZE + 1])
         if len(data) > REPR_OUTPUT_SIZE:
