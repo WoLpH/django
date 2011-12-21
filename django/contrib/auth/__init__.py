@@ -104,3 +104,4 @@ def get_user(request):
     except KeyError:
         user = AnonymousUser()
     return user
+
