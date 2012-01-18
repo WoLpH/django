@@ -40,7 +40,6 @@ def debug(request):
 
 def i18n(request):
     from django.utils import translation
-
     context_extras = {}
     context_extras['LANGUAGES'] = settings.LANGUAGES
     context_extras['LANGUAGE_CODE'] = translation.get_language()
