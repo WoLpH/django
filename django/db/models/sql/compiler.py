@@ -815,7 +815,14 @@ class SQLCompiler(object):
                 return
 
         cursor = self.connection.cursor()
+        try:
         cursor.execute(sql, params)
+        except Exception, e:
+            from django.conf import settings
+            if not settings.DEBUG:
+                raise
+            queries = self.connection.queries
+            raise KeyboardInterrupt, queries[-2]
 
         if not result_type:
             return cursor
